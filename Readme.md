@@ -35,8 +35,6 @@
 
 ### 4️⃣ 使用者介面
 - 強調 **簡單易懂、乾淨整潔**
-- 使用表格與卡片式設計展示紀錄
-- 行動裝置與桌面皆有良好瀏覽體驗（響應式設計）
 
 ---
 
@@ -46,21 +44,3 @@
 - [ ] ChatGPT 整合快速問答功能
 
 ---
-
-## 🛠️ 技術使用建議（可依實作調整）
-
-| 類別 | 技術選項 |
-|------|-----------|
-| 前端 | HTML, CSS, JavaScript, React.js |
-| 表格呈現 | Handsontable / 自製表格元件 |
-| 後端 | Node.js + Express / Flask / Django |
-| 資料庫 | MongoDB / MySQL / PostgreSQL |
-| 圖表 | Chart.js / ECharts |
-| 登入驗證 | JWT + bcrypt |
-| 檔案上傳 | Multer（Node.js）或 Flask-Upload |
-| 部署 | Vercel / Render / Firebase |
-
----
-
-## 📁 專案結構建議（簡略）
-
