@@ -1,4 +1,4 @@
-# 學習打卡平台 – Learning Effeciency System
+# 學習成效分析系統 – Learning Effectivenss System
 
 一個幫助使用者紀錄學習進度、管理學習內容、追蹤學習成效的網站平台，適合學生用來自我規劃與提升學習效率。
 
