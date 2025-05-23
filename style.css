@@ -1,4 +1,3 @@
-/* style.css */
 body {
   font-family: sans-serif;
   background-color: #f2f2f2;
@@ -20,20 +19,21 @@ body {
   margin-bottom: 1.5rem;
 }
 .box input {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: 1rem;
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 .box button {
-  width: 100%;
+  width: 280px;
   padding: 0.6rem;
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: 20px;
 }
 .box button:hover {
   background-color: #45a049;
