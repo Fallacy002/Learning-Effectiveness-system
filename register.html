@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>註冊 - 學習打卡平台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="box">
+    <h2>註冊帳號</h2>
+    <form id="register-form">
+      <input type="text" id="username" placeholder="使用者名稱或 Email" required />
+      <input type="password" id="password" placeholder="密碼" required />
+      <input type="password" id="confirm-password" placeholder="確認密碼" required />
+      <button type="submit">註冊</button>
+    </form>
+    <div class="link">
+      已有帳號？<a href="login.html">返回登入</a>
+    </div>
+    <div class="error-msg" id="register-error-msg"></div>
+  </div>
+
+  <script>
+    // 密碼驗證
+    document.getElementById("register-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const pw = document.getElementById("password").value;
+      const confirmPw = document.getElementById("confirm-password").value;
+      const errorMsg = document.getElementById("register-error-msg");
+
+      if (pw !== confirmPw) {
+        errorMsg.textContent = "⚠ 密碼與確認密碼不一致！";
+      } else {
+        errorMsg.textContent = "";
+        alert("✅ 註冊成功！（實際功能尚未接後端）");
+      }
+    });
+  </script>
+</body>
+</html>
