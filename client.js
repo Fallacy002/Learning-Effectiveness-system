@@ -53,7 +53,7 @@ document.getElementById("login-form")?.addEventListener("submit", async function
         });
         const data = await res.json();
         if (res.ok) {
-            window.location.href = "test.html";
+            window.location.href = "main/test.html";
         } else {
             errorMsg.textContent = "⚠ " + (data.error || "登入失敗！");
         }
