@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const mainApi = require('./main/main-server.js');
 
 const PORT = 3000;
 const USERS_FILE = './users.json';
@@ -83,3 +84,14 @@ http.createServer((req, res) => {
 }).listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
+
+if (req.url === '/api/add-record' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => mainApi.addRecord(req, res, body));
+    return;
+}
+if (req.url === '/api/records' && req.method === 'GET') {
+    mainApi.getRecords(res);
+    return;
+}
