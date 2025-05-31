@@ -4,56 +4,170 @@
     <meta charset="UTF-8" />
     <title>學習記錄 - 學習打卡平台</title>
     <link rel="stylesheet" href="../style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../client.js" defer></script>
     <style>
-      .main-container { display: flex; gap: 2rem; }
-      .box { flex: 1; }
+      .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+      }
+      .box {
+        max-width: 400px;
+        width: 325px;
+        margin: 0 auto;
+      }
       .records-table-container {
-        flex: 1;
+        max-width: 900px;
+        width: 100%;
+        margin: 32px auto 0 auto;
         background: #fff;
         border-radius: 10px;
-        padding: 1rem;
+        padding: 16px;
         box-shadow: 0 0 10px rgba(0,0,0,0.08);
-        min-width: 320px;
-        max-width: 500px;
-        margin-top: 2rem;
-        height: fit-content;
       }
       table { width: 100%; border-collapse: collapse; }
       th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-      th { background: #f2f2f2; }
+      th { background: #f2f2f2; 
+      }
+      #download-chart-segment {
+        margin-top: 20px;
+        margin-right: 20px;
+        text-align: center;
+      }
     </style>
 </head>
 <body>
-    <div class="main-container">
-      <div class="box">
-          <h2>學習記錄</h2>
-          <div id="learning-records">
-              <!-- This section will display the learning records -->
-          </div>
-          <form id="add-subject-form">
-              <input type="text" id="subject-name" placeholder="科目名稱" required />
-              <input type="text" id="study-time" placeholder="學習時間 (小時)" required />
-              <button type="submit">新增科目</button>
-          </form>
-          <div id="progress-chart">
-              <!-- This section will visualize progress through charts -->
-          </div>
-      </div>
-      <div class="records-table-container">
-        <h3>紀錄表</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>日期</th>
-              <th>科目</th>
-              <th>學習時間 (小時)</th>
-            </tr>
-          </thead>
-          <tbody id="records-tbody"></tbody>
-        </table>
+  <div class="main-container">
+    <div class="box">
+      <h2>學習記錄</h2>
+      <div id="learning-records"></div>
+      <form id="add-subject-form">
+        <input type="text" id="subject-name" placeholder="科目名稱" required />
+        <input type="text" id="study-time" placeholder="學習時間 (小時)" required />
+        <input type="text" id="study-period" placeholder="學習時段 (如 12:00 pm - 3:00 pm)" required />
+        <button type="submit">新增科目</button>
+      </form>
+      <div id="progress-chart"></div>
+      <!-- New segment for subject selection and chart download -->
+      <div id="download-chart-segment">
+        <label for="download-subject-select">選擇科目下載學習時數圖表：</label>
+        <select id="download-subject-select"></select>
+        <button id="download-chart-btn" type="button">下載本週學習時數折線圖</button>
       </div>
     </div>
-    <script src="main-client.js" defer></script>
+    <div class="records-table-container">
+      <h3>紀錄表</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>日期</th>
+            <th>科目</th>
+            <th>學習時間 (小時)</th>
+            <th>學習時段</th>
+            <th>備註</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="records-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="main-client.js" defer></script>
+  <script>
+    // --- Chart download logic ---
+    let allRecords = [];
+
+    async function fetchRecordsForDownload() {
+      const res = await fetch('/api/records');
+      allRecords = await res.json();
+      populateDownloadSubjectSelect(allRecords);
+    }
+
+    function populateDownloadSubjectSelect(records) {
+      const select = document.getElementById('download-subject-select');
+      if (!select) return;
+      const subjects = [...new Set(records.map(r => r.subject))];
+      select.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function getCurrentWeekDates() {
+      const now = new Date();
+      const start = new Date(now);
+      start.setDate(now.getDate() - now.getDay() + 1); // Monday
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        dates.push(d.toISOString().slice(0, 10));
+      }
+      return dates;
+    }
+
+    function createSubjectChartImage(subject, callback) {
+      // Create a hidden canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 300;
+      const ctx = canvas.getContext('2d');
+      const weekDates = getCurrentWeekDates();
+      const dataPerDay = weekDates.map(date =>
+        allRecords
+          .filter(r => r.subject === subject && r.date === date)
+          .reduce((sum, r) => sum + Number(r.study_time), 0)
+      );
+      // Create chart
+      const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: weekDates,
+          datasets: [{
+            label: `${subject} 每日學習時數`,
+            data: dataPerDay,
+            borderColor: 'rgba(75,192,192,1)',
+            backgroundColor: 'rgba(75,192,192,0.1)',
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: false,
+          animation: false,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: '小時' } },
+            x: { title: { display: true, text: '日期' } }
+          }
+        },
+        plugins: [{
+          id: 'done',
+          afterRender: function() {
+            setTimeout(() => {
+              callback(canvas.toDataURL('image/png'));
+              chart.destroy();
+            }, 500);
+          }
+        }]
+      });
+    }
+
+    document.getElementById('download-chart-btn')?.addEventListener('click', () => {
+      const select = document.getElementById('download-subject-select');
+      const subject = select.value;
+      if (!subject) return;
+      createSubjectChartImage(subject, (dataUrl) => {
+        // Download the image
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${subject}_本週學習時數.png`;
+        link.click();
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', fetchRecordsForDownload);
+  </script>
 </body>
 </html>

@@ -61,7 +61,29 @@ http.createServer((req, res) => {
         });
         return;
     }
-
+    // --- Move these two API routes INSIDE the server handler ---
+    if (req.url === '/api/add-record' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => mainApi.addRecord(req, res, body));
+        return;
+    }
+    if (req.url === '/api/records' && req.method === 'GET') {
+        mainApi.getRecords(res);
+        return;
+    }
+    if (req.url.startsWith('/api/delete-record/') && req.method === 'DELETE') {
+        const id = req.url.split('/').pop();
+        mainApi.deleteRecord(req, res, id);
+        return;
+    }
+    if (req.url.startsWith('/api/edit-record/') && req.method === 'PUT') {
+        const id = req.url.split('/').pop();
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => mainApi.editRecord(req, res, id, body));
+        return;
+    }
     // Static file serving
     let filePath = '.' + req.url.split('?')[0];
     if (filePath === './' || filePath === './index.html' || filePath === './login.html') filePath = './login.html';
@@ -84,14 +106,3 @@ http.createServer((req, res) => {
 }).listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
-
-if (req.url === '/api/add-record' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', () => mainApi.addRecord(req, res, body));
-    return;
-}
-if (req.url === '/api/records' && req.method === 'GET') {
-    mainApi.getRecords(res);
-    return;
-}
