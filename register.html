@@ -1,24 +1,24 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html> <!-- 宣告這是一個 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定網頁語言為繁體中文 -->
 <head>
-  <meta charset="UTF-8" />
-  <title>註冊 - 學習打卡平台</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" /> <!-- 設定字元編碼為 UTF-8，支援中文顯示 -->
+  <title>註冊 - 學習打卡平台</title> <!-- 設定網頁標題 -->
+  <link rel="stylesheet" href="style.css" /> <!-- 載入外部 CSS 樣式表 -->
 </head>
 <body>
-  <div class="box">
-    <h2>註冊帳號</h2>
-    <form id="register-form">
-      <input type="text" id="username" placeholder="使用者名稱或 Email" required />
-      <input type="password" id="password" placeholder="密碼" required />
-      <input type="password" id="confirm-password" placeholder="確認密碼" required />
-      <button type="submit">註冊</button>
+  <div class="box"> <!-- 主要內容區塊，使用 box 樣式 -->
+    <h2>註冊帳號</h2> <!-- 標題：註冊帳號 -->
+    <form id="register-form"> <!-- 註冊表單，id 方便 JavaScript 操作 -->
+      <input type="text" id="username" placeholder="使用者名稱或 Email" required /> <!-- 帳號輸入框，必填 -->
+      <input type="password" id="password" placeholder="密碼" required /> <!-- 密碼輸入框，必填 -->
+      <input type="password" id="confirm-password" placeholder="確認密碼" required /> <!-- 確認密碼輸入框，必填 -->
+      <button type="submit">註冊</button> <!-- 提交按鈕 -->
     </form>
     <div class="link">
-      已有帳號？<a href="login.html">返回登入</a>
+      已有帳號？<a href="login.html">返回登入</a> <!-- 返回登入頁的連結 -->
     </div>
-    <div class="error-msg" id="register-error-msg"></div>
+    <div class="error-msg" id="register-error-msg"></div> <!-- 顯示錯誤訊息的區塊 -->
   </div>
-  <script src="client.js"></script>
+  <script src="client.js"></script> <!-- 載入前端 JavaScript 檔案 -->
 </body>
-</html>
+</html> <!-- HTML 結束標籤 -->

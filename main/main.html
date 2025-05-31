@@ -1,173 +1,172 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html> <!-- 宣告這是一個 HTML5 文件 -->
+<html lang="zh-Hant"> <!-- 設定網頁語言為繁體中文 -->
 <head>
-    <meta charset="UTF-8" />
-    <title>學習記錄 - 學習打卡平台</title>
-    <link rel="stylesheet" href="../style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../client.js" defer></script>
+    <meta charset="UTF-8" /> <!-- 設定字元編碼為 UTF-8，支援中文顯示 -->
+    <title>學習記錄 - 學習打卡平台</title> <!-- 設定網頁標題 -->
+    <link rel="stylesheet" href="../style.css" /> <!-- 載入外部 CSS 樣式表 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- 載入 Chart.js 圖表函式庫 -->
+    <script src="../client.js" defer></script> <!-- 載入共用前端 JS，defer 表示 DOM 載入後才執行 -->
     <style>
-      .main-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px;
+      .main-container { /* 主要內容容器樣式 */
+        display: flex; /* 使用 flex 排版 */
+        flex-direction: column; /* 垂直排列 */
+        align-items: center; /* 水平置中 */
+        padding: 16px; /* 內距 */
       }
-      .box {
-        max-width: 400px;
-        width: 325px;
-        margin: 0 auto;
+      .box { /* 盒子區塊樣式 */
+        max-width: 400px; /* 最大寬度 400px */
+        width: 325px; /* 固定寬度 325px */
+        margin: 0 auto; /* 置中 */
       }
-      .records-table-container {
-        max-width: 900px;
-        width: 100%;
-        margin: 32px auto 0 auto;
-        background: #fff;
-        border-radius: 10px;
-        padding: 16px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      .records-table-container { /* 紀錄表容器樣式 */
+        max-width: 900px; /* 最大寬度 900px */
+        width: 100%; /* 寬度 100% */
+        margin: 32px auto 0 auto; /* 上方間距 32px，水平置中 */
+        background: #fff; /* 背景白色 */
+        border-radius: 10px; /* 圓角 */
+        padding: 16px; /* 內距 */
+        box-shadow: 0 0 10px rgba(0,0,0,0.08); /* 陰影 */
       }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-      th { background: #f2f2f2; 
-      }
+      table { width: 100%; border-collapse: collapse; } /* 表格寬度 100%，合併邊框 */
+      th, td { border: 1px solid #ccc; padding: 8px; text-align: center; } /* 表頭與儲存格樣式 */
+      th { background: #f2f2f2; } /* 表頭背景色 */
       #download-chart-segment {
-        margin-top: 20px;
-        margin-right: 20px;
-        text-align: center;
+        margin-top: 20px; /* 上方間距 */
+        margin-right: 20px; /* 右方間距 */
+        text-align: center; /* 文字置中 */
       }
     </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="box">
-      <h2>學習記錄</h2>
-      <div id="learning-records"></div>
-      <form id="add-subject-form">
-        <input type="text" id="subject-name" placeholder="科目名稱" required />
-        <input type="text" id="study-time" placeholder="學習時間 (小時)" required />
-        <input type="text" id="study-period" placeholder="學習時段 (如 12:00 pm - 3:00 pm)" required />
-        <button type="submit">新增科目</button>
+  <div class="main-container"> <!-- 主要內容容器 -->
+    <div class="box"> <!-- 盒子區塊 -->
+      <h2>學習記錄</h2> <!-- 標題 -->
+      <div id="learning-records"></div> <!-- 學習紀錄顯示區（可用於訊息或統計） -->
+      <form id="add-subject-form"> <!-- 新增科目表單 -->
+        <input type="text" id="subject-name" placeholder="科目名稱" required /> <!-- 科目名稱輸入框 -->
+        <input type="text" id="study-time" placeholder="學習時間 (小時)" required /> <!-- 學習時間輸入框 -->
+        <input type="text" id="study-period" placeholder="學習時段 (如 12:00 pm - 3:00 pm)" required /> <!-- 學習時段輸入框 -->
+        <button type="submit">新增科目</button> <!-- 送出按鈕 -->
       </form>
-      <div id="progress-chart"></div>
+      <div id="progress-chart"></div> <!-- 進度圖表顯示區（可用於圖表） -->
       <!-- New segment for subject selection and chart download -->
-      <div id="download-chart-segment">
-        <label for="download-subject-select">選擇科目下載學習時數圖表：</label>
-        <select id="download-subject-select"></select>
-        <button id="download-chart-btn" type="button">下載本週學習時數折線圖</button>
+      <div id="download-chart-segment"> <!-- 下載圖表區塊 -->
+        <label for="download-subject-select">選擇科目下載學習時數圖表：</label> <!-- 下拉選單標籤 -->
+        <select id="download-subject-select"></select> <!-- 科目下拉選單 -->
+        <button id="download-chart-btn" type="button">下載本週學習時數折線圖</button> <!-- 下載圖表按鈕 -->
       </div>
     </div>
-    <div class="records-table-container">
-      <h3>紀錄表</h3>
+    <div class="records-table-container"> <!-- 紀錄表容器 -->
+      <h3>紀錄表</h3> <!-- 小標題 -->
       <table>
         <thead>
           <tr>
-            <th>日期</th>
-            <th>科目</th>
-            <th>學習時間 (小時)</th>
-            <th>學習時段</th>
-            <th>備註</th>
-            <th>操作</th>
+            <th>日期</th> <!-- 日期欄 -->
+            <th>科目</th> <!-- 科目欄 -->
+            <th>學習時間 (小時)</th> <!-- 學習時間欄 -->
+            <th>學習時段</th> <!-- 學習時段欄 -->
+            <th>備註</th> <!-- 備註欄 -->
+            <th>操作</th> <!-- 操作欄（編輯/刪除） -->
           </tr>
         </thead>
-        <tbody id="records-tbody"></tbody>
+        <tbody id="records-tbody"></tbody> <!-- 紀錄資料列 -->
       </table>
     </div>
   </div>
-  <script src="main-client.js" defer></script>
+  <script src="main-client.js" defer></script> <!-- 載入主頁前端 JS，defer 表示 DOM 載入後才執行 -->
   <script>
     // --- Chart download logic ---
-    let allRecords = [];
+    let allRecords = []; // 用來存放所有紀錄的全域變數
 
-    async function fetchRecordsForDownload() {
-      const res = await fetch('/api/records');
-      allRecords = await res.json();
-      populateDownloadSubjectSelect(allRecords);
+    async function fetchRecordsForDownload() { // 非同步函式，取得所有紀錄
+      const res = await fetch('/api/records'); // 從後端 API 取得紀錄
+      allRecords = await res.json(); // 轉成 JSON 並存到 allRecords
+      populateDownloadSubjectSelect(allRecords); // 更新下拉選單
     }
 
-    function populateDownloadSubjectSelect(records) {
-      const select = document.getElementById('download-subject-select');
-      if (!select) return;
-      const subjects = [...new Set(records.map(r => r.subject))];
-      select.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    function populateDownloadSubjectSelect(records) { // 根據紀錄填充下拉選單
+      const select = document.getElementById('download-subject-select'); // 取得下拉選單元素
+      if (!select) return; // 沒有找到就結束
+      const subjects = [...new Set(records.map(r => r.subject))]; // 取得所有不重複的科目
+      select.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join(''); // 產生選項
     }
 
-    function getCurrentWeekDates() {
+    function getCurrentWeekDates() { // 取得本週所有日期（週一到週日）
       const now = new Date();
       const start = new Date(now);
-      start.setDate(now.getDate() - now.getDay() + 1); // Monday
+      start.setDate(now.getDate() - now.getDay() + 1); // 計算本週一
       const dates = [];
       for (let i = 0; i < 7; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
-        dates.push(d.toISOString().slice(0, 10));
+        dates.push(d.toISOString().slice(0, 10)); // 轉成 YYYY-MM-DD
       }
       return dates;
     }
 
-    function createSubjectChartImage(subject, callback) {
+    function createSubjectChartImage(subject, callback) { // 產生科目圖表圖片
       // Create a hidden canvas
-      const canvas = document.createElement('canvas');
-      canvas.width = 800;
-      canvas.height = 300;
-      const ctx = canvas.getContext('2d');
-      const weekDates = getCurrentWeekDates();
+      const canvas = document.createElement('canvas'); // 建立隱藏的 canvas
+      canvas.width = 800; // 設定寬度
+      canvas.height = 300; // 設定高度
+      const ctx = canvas.getContext('2d'); // 取得繪圖上下文
+      const weekDates = getCurrentWeekDates(); // 取得本週日期
       const dataPerDay = weekDates.map(date =>
         allRecords
-          .filter(r => r.subject === subject && r.date === date)
-          .reduce((sum, r) => sum + Number(r.study_time), 0)
+          .filter(r => r.subject === subject && r.date === date) // 篩選出該科目且日期相符的紀錄
+          .reduce((sum, r) => sum + Number(r.study_time), 0) // 累加學習時數
       );
       // Create chart
-      const chart = new Chart(ctx, {
+      const chart = new Chart(ctx, { // 使用 Chart.js 建立折線圖
         type: 'line',
         data: {
-          labels: weekDates,
+          labels: weekDates, // X 軸為本週日期
           datasets: [{
-            label: `${subject} 每日學習時數`,
-            data: dataPerDay,
-            borderColor: 'rgba(75,192,192,1)',
-            backgroundColor: 'rgba(75,192,192,0.1)',
-            fill: true,
-            tension: 0.2
+            label: `${subject} 每日學習時數`, // 圖表標籤
+            data: dataPerDay, // Y 軸資料
+            borderColor: 'rgba(75,192,192,1)', // 線條顏色
+            backgroundColor: 'rgba(75,192,192,0.1)', // 填充顏色
+            fill: true, // 填滿底色
+            tension: 0.2 // 線條彎曲度
           }]
         },
         options: {
-          responsive: false,
-          animation: false,
+          responsive: false, // 不自動縮放
+          animation: false, // 不啟用動畫
           plugins: {
-            legend: { display: true }
+            legend: { display: true } // 顯示圖例
           },
           scales: {
-            y: { beginAtZero: true, title: { display: true, text: '小時' } },
-            x: { title: { display: true, text: '日期' } }
+            y: { beginAtZero: true, title: { display: true, text: '小時' } }, // Y 軸從 0 開始，標題為小時
+            x: { title: { display: true, text: '日期' } } // X 軸標題為日期
           }
         },
         plugins: [{
           id: 'done',
-          afterRender: function() {
+          afterRender: function() { // 圖表渲染後
             setTimeout(() => {
-              callback(canvas.toDataURL('image/png'));
-              chart.destroy();
+              callback(canvas.toDataURL('image/png')); // 取得圖片資料並回傳
+              chart.destroy(); // 銷毀圖表
             }, 500);
           }
         }]
       });
     }
 
-    document.getElementById('download-chart-btn')?.addEventListener('click', () => {
-      const select = document.getElementById('download-subject-select');
-      const subject = select.value;
-      if (!subject) return;
-      createSubjectChartImage(subject, (dataUrl) => {
+    document.getElementById('download-chart-btn')?.addEventListener('click', () => { // 下載按鈕點擊事件
+      const select = document.getElementById('download-subject-select'); // 取得下拉選單
+      const subject = select.value; // 取得選中的科目
+      if (!subject) return; // 沒選科目就結束
+      createSubjectChartImage(subject, (dataUrl) => { // 產生圖表圖片
         // Download the image
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `${subject}_本週學習時數.png`;
-        link.click();
+        const link = document.createElement('a'); // 建立下載連結
+        link.href = dataUrl; // 設定圖片網址
+        link.download = `${subject}_本週學習時數.png`; // 設定下載檔名
+        link.click(); // 觸發下載
       });
     });
 
-    window.addEventListener('DOMContentLoaded', fetchRecordsForDownload);
+    window.addEventListener('DOMContentLoaded', fetchRecordsForDownload); // 畫面載入完成時自動取得紀錄
   </script>
 </body>
-</html>
+</html> <!-- HTML 結束標籤 -->
