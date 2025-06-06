@@ -18,5 +18,45 @@
     </div>
     <div class="error-msg" id="login-error-msg"></div> <!-- 顯示錯誤訊息的區塊 -->
   </div>
-  <script src="client.js"></script> <!-- 載入前端 JavaScript 檔案 -->
+  <script>
+    // Login 登入功能
+    document.getElementById("login-form")?.addEventListener("submit", async function(e) {
+        // 阻止表單預設提交行為
+        e.preventDefault();
+        // 取得帳號（第一個文字輸入框的值並去除空白）
+        const username = e.target.querySelector('input[type="text"]').value.trim();
+        // 取得密碼（第一個密碼輸入框的值）
+        const password = e.target.querySelector('input[type="password"]').value;
+        // 取得顯示錯誤訊息的元素
+        const errorMsg = document.getElementById("login-error-msg");
+
+        // 檢查帳號或密碼是否為空
+        if (!username || !password) {
+            errorMsg.textContent = "⚠ 請填寫所有欄位！";
+            return; // 若有欄位為空則顯示錯誤訊息並結束
+        }
+
+        try {
+            // 發送登入請求到後端 API
+            const res = await fetch('/api/login', {
+                method: 'POST', // 使用 POST 方法
+                headers: { 'Content-Type': 'application/json' }, // 設定請求內容型態為 JSON
+                body: JSON.stringify({ username, password }) // 將帳號密碼轉為 JSON 字串
+            });
+            // 解析回傳的 JSON 資料
+            const data = await res.json();
+            if (res.ok) {
+                // 登入成功，導向主頁
+                window.location.href = "main.html";
+            } else {
+                // 登入失敗，顯示後端回傳的錯誤訊息或預設訊息
+                errorMsg.textContent = "⚠ " + (data.error || "登入失敗！");
+            }
+        } catch (err) {
+            // 伺服器錯誤，顯示通用錯誤訊息
+            errorMsg.textContent = "⚠ 伺服器錯誤，請稍後再試！";
+        }
+    });
+  </script>
+</body>
 </html> <!-- HTML 結束標籤 -->
